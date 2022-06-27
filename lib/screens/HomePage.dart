@@ -19,6 +19,8 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final _player = AudioPlayer();
+  final _thumbnailBaseUrl = "https://source.unsplash.com/random/?music";
+  String _thumbnail = "https://source.unsplash.com/random/?music";
   final _sampleUris = [
     "https://tequilashirts-audios.s3.ap-south-1.amazonaws.com/1.mp3",
     "https://tequilashirts-audios.s3.ap-south-1.amazonaws.com/2.mp3",
@@ -54,6 +56,10 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Future<void> _playNext() async {
     // Try to load audio from a source and catch any errors.
     try {
+      setState(() {
+        _thumbnail =
+            "$_thumbnailBaseUrl#${DateTime.now().millisecondsSinceEpoch.toString()}";
+      });
       await _player.setAudioSource(
         AudioSource.uri(
           Uri.parse(_sampleUris[_random.nextInt(_sampleUris.length)]),
@@ -101,6 +107,16 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Container(
+              height: 300,
+              width: double.infinity,
+              child: FittedBox(
+                fit: BoxFit.fill,
+                child: Image.network(
+                  _thumbnail,
+                ),
+              ),
+            ),
             // Display play/pause button and volume/speed sliders.
             ControlButtons(
               _player,
